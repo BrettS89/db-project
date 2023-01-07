@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  microservice-1:
+    build:
+      context: ./microservice-1
+    container_name: "microservice-1"
+    depends_on:
+      lynxdb-2:
+        condition: service_started
+    env_file:
+      - ./microservice-1/.env
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
+    # volumes:
+    #   - ./microservice-1:/app
+
+  microservice-2:
+    build:
+      context: ./microservice-2
+    container_name: "microservice-2"
+    depends_on:
+      lynxdb-1:
+        condition: service_started
+    env_file:
+      - ./microservice-2/.env
+    ports:
+      - "5002:5000"
+    restart: unless-stopped
+    # volumes:
+    #   - ./microservice-2:/app
+
+  lynxdb-1:
+    image: bretts89/lynxdb
+    container_name: "lynxdb-1"
+    ports:
+      - "4001:4001"
+    restart: unless-stopped
+
+  lynxdb-2:
+    image: bretts89/lynxdb
+    container_name: "lynxdb-2"
+    ports:
+      - "4002:4001"
+    restart: unless-stopped
+
+  lynx-manager:
+    image: bretts89/lynx-manager
+    container_name: "lynx-manager"
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
